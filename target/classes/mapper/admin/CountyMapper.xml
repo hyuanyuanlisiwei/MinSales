@@ -1,0 +1,76 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+"http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.minsales.admin.dao.AdminCountyDao">
+    
+    <!-- city_id all county-->
+     <select id="queryAll" parameterType="County" resultType="County">
+     	select 
+     		id,name
+     	from 
+     		county
+     	where 
+     		city_id=#{cityId}
+     </select>    
+     <!-- total -->
+     <select id="queryCount" parameterType="County" resultType="int">
+     select 
+     	count(*)
+     from
+         province,city,county
+     where
+     <!-- 消除笛卡尔乘积 -->
+         province.id=city.province_id
+         and
+         city.id=county.city_id
+      <!-- 条件 -->
+      <if test="provinceId!=null and provinceId!=0">
+      	and province.id=#{provinceId}
+      </if>
+      <if test="cityId!=null and cityId!=0">
+      	and city.id=#{cityId}
+      </if>
+      <if test="name!=null and name!=''">
+      	and county.name like '%${name}%';
+      </if>
+     </select>
+
+	<!-- rows -->
+	<select id="query" parameterType="County" resultType="County">
+		select
+			county.id as id,province.name as provinceName,city.name as cityName,county.name as name
+		from
+			province,city,county
+		where
+		<!-- 消除笛卡尔乘积 -->
+			province.id=city.province_id
+			and
+			city.id=county.city_id
+		<!-- 条件 -->
+		<if test="provinceId!=null and provinceId!=0">
+			and province.id=#{provinceId}
+		</if>
+		<if test="cityId!=null and cityId!=0">
+			and city.id=#{cityId}
+		</if>
+		<if test="name!=null and name!=''">
+			and county.name like '%${name}%'
+		</if>
+		limit #{from},#{size};
+	</select> 
+          
+     <!-- add -->    
+     <insert id="add" parameterType="County">
+     	insert into county (city_id,name)
+     	values (#{cityId},#{name});
+     </insert>
+	<!-- delete -->     
+     <delete id="delete" parameterType="County">
+        delete from county where id=#{id};
+     </delete>
+     <!-- update -->
+     <update id="update" parameterType="County">
+        update county set name=#{name} where id=#{id};
+     </update>
+</mapper>

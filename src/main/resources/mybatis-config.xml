@@ -1,0 +1,64 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE configuration
+        PUBLIC "-//mybatis.org//DTD Config 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-config.dtd">
+<configuration>
+    <settings>
+        <setting name="safeRowBoundsEnabled" value="false"/>
+        <setting name="autoMappingBehavior" value="FULL"/>
+		<setting name="cacheEnabled" value="true"/>
+    </settings>
+  <!-- 起 别名   -->
+    <typeAliases>
+		
+		<!-- 基本信息管理 -->
+		<typeAlias type="com.minsales.admin.bean.Admin" alias="Admin"/>
+		<typeAlias type="com.minsales.admin.bean.Province" alias="Province"/>
+		<typeAlias type="com.minsales.admin.bean.City" alias="City"/>
+		<typeAlias type="com.minsales.admin.bean.County" alias="County"/>
+		<typeAlias type="com.minsales.admin.bean.Delivery" alias="Delivery"/>
+		<typeAlias type="com.minsales.admin.bean.Color" alias="Color"/>
+		<typeAlias type="com.minsales.admin.bean.EvaluateLevel" alias="EvaluateLevel"/>
+		<typeAlias type="com.minsales.admin.bean.Notice" alias="Notice"/>
+		
+		
+		<!-- 商品管理 -->
+		<typeAlias type="com.minsales.admin.bean.Category" alias="Category"/>
+		<typeAlias type="com.minsales.admin.bean.Goods" alias="Goods" />
+		<typeAlias type="com.minsales.admin.bean.Image" alias="Image" />
+		
+		<!-- 客户端 -->
+		<typeAlias type="com.minsales.client.bean.ClientIndexBean" alias="ClientIndexBean"/>
+		
+		
+		
+		
+    </typeAliases>
+    <!-- 加载 sql.xml 文件 -->
+    <mappers>
+    	<!-- 管理员 -->
+    	<!-- 基本信息管理 -->
+    	<mapper resource="mapper/admin/AdminMapper.xml"/>
+    	<mapper resource="mapper/admin/ProvinceMapper.xml"/>
+    	<mapper resource="mapper/admin/CityMapper.xml"/>
+    	<mapper resource="mapper/admin/CountyMapper.xml"/>
+    	<mapper resource="mapper/admin/DeliveryMapper.xml"/>
+    	<mapper resource="mapper/admin/ColorMapper.xml"/>
+    	<mapper resource="mapper/admin/EvaluateLevelMapper.xml"/>
+    	<mapper resource="mapper/admin/NoticeMapper.xml"/>
+    	
+    	<!-- 商品管理 -->
+    	<mapper resource="mapper/admin/CategoryMapper.xml"/>
+    	<mapper resource="mapper/admin/GoodsMapper.xml"/>
+    	<mapper resource="mapper/admin/ImageMapper.xml"/>
+    	
+    	
+    	<!-- 客户端 -->
+    	<mapper resource="mapper/client/ClientIndexMapper.xml"/>
+    	
+    	
+    	
+    	
+    </mappers>
+    
+</configuration>

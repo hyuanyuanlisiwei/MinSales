@@ -1,0 +1,39 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+"http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.minsales.admin.dao.AdminNoticeDao">
+        
+        <!-- query All -->
+        <select id="queryAll" resultType="Notice">
+        select *from notice;
+        </select>
+        
+        
+        <!-- query -->
+        <select id="query" parameterType="Notice" resultType="Notice">
+            <!-- 模糊查询 ${} 代替 #{} -->
+        	select *from notice
+        	<where>
+        	    <if test="name!=null">
+        	    	and name like '%${name}%';
+        	    </if>
+        	</where>
+        </select>
+         
+        <!-- insert -->
+        <insert id="add" parameterType="Notice">
+        	insert into notice (name) values (#{name});
+        </insert>
+        
+        <!-- delete -->
+        <delete id="delete" parameterType="Notice">
+        	delete from notice where id=#{id};
+        </delete>
+        
+        <!-- update -->
+        <update id="update" parameterType="Notice">
+        	update notice set name=#{name} where id=#{id};
+        </update>
+          
+</mapper>

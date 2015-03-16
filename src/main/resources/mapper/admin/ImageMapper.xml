@@ -1,0 +1,117 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+"http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.minsales.admin.dao.AdminImageDao">
+            
+     <!-- 查询所有的商品:指的是 添加到imgaddress中的商品:可以进行模糊查询 -->
+     <select id="query" parameterType="Image" resultType="Image">
+    	select
+    		 distinct goods.id as goodsId,
+    		 goods.title as goodsName
+    	from 
+    		imgaddress,goods
+    	where
+    		imgaddress.goods_id=goods.id
+    	<!-- 查询指定商品 -->
+    	<if test="goodsId!=null and goodsId!=0">
+    		and goods.id=#{goodsId}
+    	</if>
+    	limit #{from},#{size};
+     </select>
+     
+     <!-- query count -->
+     <select id="queryCount" parameterType="Image" resultType="int">
+     	select
+    		count(*)
+    	from 
+    		imgaddress,goods
+    	where
+    		imgaddress.goods_id=goods.id
+    	<!-- 查询指定商品 -->
+    	<if test="goodsId!=null and goodsId!=0">
+    		and goods.id=#{goodsId};
+    	</if>
+     </select>
+     
+     
+     <!-- 查询指定商品的所有颜色 -->
+     <select id="queryGoodsColorImg" parameterType="Image" resultType="Image">
+        select 
+            color.id as colorId,
+            color.name as colorName
+     	from
+     		imgaddress,color
+     	where
+     		imgaddress.color_id=color.id
+     	and 
+     		imgaddress.goods_id=#{goodsId};
+     </select>
+     
+     <!-- 删除 指定商品的 指定颜色 -->
+     <delete id="deleteGoodsColorImg" parameterType="Image">
+     	delete from
+     		imgaddress
+     	where
+     		id=#{id};
+     </delete>
+     <!-- 上传图片:保存颜色和图片-->
+     <insert id="insertGoodsColorImg" parameterType="Image" useGeneratedKeys="true" keyProperty="id">
+     insert into
+            imgaddress
+     		(color_id,goods_id)     
+     values
+     		(#{colorId},#{goodsId});
+     </insert>
+     <!-- 查询出指定商品的特定颜色的三张图片的地址然后删除 -->
+     <select id="queryGoodsImgAddress" parameterType="Image" resultType="Image">
+     	select 
+     		id as id,
+     		img_address as address,
+     		img_address_small as addressSmall,
+     		img_address_big as addressBig
+     	from
+     		imgaddress
+     	where
+     	    goods_id=#{goodsId} and color_id=#{colorId}; 
+     </select>
+     
+     
+     <!-- 保存图片的地址 -->
+     <update id="insertGoodsImgAddress" parameterType="Image">
+        update 
+        	imgaddress
+        set
+        	img_address=#{address},
+        	img_address_small=#{addressSmall},
+        	img_address_big=#{addressBig}
+     	where
+     		id=#{id};
+     </update>
+     
+     
+     <!-- 查询指定商品 没有的颜色 -->
+     <select id="queryGoodsNotColorImg" parameterType="Image" resultType="Image">
+     	select
+     		distinct
+     		color.id as colorId,
+     		color.name as colorName
+     	from 
+     		imgaddress,color
+     	where
+     		imgaddress.goods_id=#{goodsId}
+     	and 
+     		color.id 
+     	not in
+     	(  
+     		select 
+     			imgaddress.color_id 
+     		from 
+     			imgaddress 
+     		where 
+     			imgaddress.goods_id=#{goodsId}
+     		and
+     			imgaddress.color_id is not null
+     	);
+     </select>
+</mapper>

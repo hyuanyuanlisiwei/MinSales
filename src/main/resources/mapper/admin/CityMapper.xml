@@ -1,0 +1,61 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+"http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.minsales.admin.dao.AdminCityDao">
+
+	<!-- 选择省份之后再选择对应的城市域 -->
+	<select id="queryAll" parameterType="City" resultType="City">
+		select 
+			id,name 
+		from 
+			city 
+		where 
+		  province_id=#{parentId};
+	</select>
+
+
+	<select id="queryCount" parameterType="City" resultType="int">
+		select
+		count(*)
+		from
+		city as c ,province as p
+		where c.province_id=p.id
+		<if test="parentId!=null and parentId!=0">
+			and p.id=#{parentId}
+		</if>
+		<if test="name!=null and name!=''">
+			and c.name like '%${name}%'
+		</if>
+	</select>
+
+	<select id="query" parameterType="City" resultType="City">
+		select
+		c.id as id, p.name as parent, c.name as name
+		from
+		city as c,province as p
+		<!-- 主外键消除 笛卡尔映射 -->
+		where c.province_id=p.id
+		<if test="parentId!=0">
+			and p.id=#{parentId}
+		</if>
+		<if test="name!=null and name!=''">
+			and c.name like '%${name}%'
+		</if>
+		limit #{from},#{size};
+	</select>
+    
+    
+    <insert id="add" parameterType="City">
+    	insert into city (province_id,name) values (#{parentId},#{name});
+    </insert>
+    
+    <delete id="delete" parameterType="City">
+    	delete from city where id=#{id};
+    </delete>
+    
+    <update id="update" parameterType="City">
+    	update city set name=#{name} where id=#{id};
+    </update>
+    
+</mapper>

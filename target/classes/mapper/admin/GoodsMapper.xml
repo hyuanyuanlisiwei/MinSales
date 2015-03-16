@@ -1,0 +1,93 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+"http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.minsales.admin.dao.AdminGoodsDao">
+	<!-- imageDao 用到的查询-->
+    <select id="queryByCategoryId" parameterType="Goods" resultType="Goods">
+    	select 
+    		goods.id as id,
+    		goods.title as title
+    	from 
+    		goods
+    	where
+    		goods.category_id=#{categoryId}
+    </select>
+
+	<!-- 根据 分类,商品名 查询  分页rows;-->
+	<select id="query" parameterType="Goods" resultType="Goods">
+		select 
+			goods.id as id,
+			category.id as categoryId,
+			category.name as categoryName,
+			goods.title as title,
+			goods.price as price,
+			goods.stock as stock,
+			goods.description as description
+		from
+		 	goods,category
+		where
+		    <!-- 消除笛卡尔乘积 -->
+		    goods.category_id=category.id
+		    <!-- 条件查询 -->
+		    <if test="categoryId!=null and categoryId!=0">
+		    	and  category.id=#{categoryId}
+		    </if>
+		    <if test="title!=null and title!=''">
+		    	and title like '%${title}%'
+		    </if>
+		    limit #{from},#{size};
+	</select>
+	
+	
+	<!-- 分页 total -->
+	<select id="queryCount" parameterType="Goods" resultType="int">
+		select 
+			count(*)
+		from
+		 	goods,category
+		where
+		    <!-- 消除笛卡尔乘积 -->
+		    goods.category_id=category.id
+		    <!-- 条件查询 -->
+		    <if test="categoryId!=null and categoryId!=0">
+		    	and  category.id=#{categoryId}
+		    </if>
+		    <if test="title!=null and title!=''">
+		    	and title like '%${title}%'
+		    </if>
+	</select>
+    
+    <!-- insert into goods-->
+    <insert id="add" parameterType="Goods" keyProperty="id" useGeneratedKeys="true">
+    	insert into 
+    		goods 
+            (category_id,title,price,stock,description)
+    	values 
+    		(#{categoryId},#{title},#{price},#{stock},#{description});
+    </insert>
+    <!-- insert into imgaddress -->
+    <insert id="addImgAddress" parameterType="Goods">
+    	insert into 
+    		imgaddress
+    		(goods_id)
+    	values
+    		(#{id});
+    </insert>
+    
+    
+    <!-- delete -->
+    <delete id="delete" parameterType="Goods">
+    	delete from goods where id=#{id};
+    </delete>
+    
+    <!-- update -->
+    <update id="update" parameterType="Goods">
+    	update 
+    		goods 
+    	set 
+    		category_id=#{categoryId},title=#{title},price=#{price},stock=#{stock},description=#{description}
+    	where 
+    		id=#{id};
+    </update>
+</mapper>

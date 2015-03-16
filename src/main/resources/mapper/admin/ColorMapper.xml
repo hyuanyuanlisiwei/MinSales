@@ -1,0 +1,34 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+"http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.minsales.admin.dao.AdminColorDao">
+        
+        
+        <!-- query -->
+        <select id="query" parameterType="Color" resultType="Color">
+            <!-- 模糊查询 ${} 代替 #{} -->
+        	select *from color
+        	<where>
+        	    <if test="name!=null">
+        	    	and name like '%${name}%';
+        	    </if>
+        	</where>
+        </select>
+         
+        <!-- insert -->
+        <insert id="add" parameterType="Color">
+        	insert into color (name) values (#{name});
+        </insert>
+        
+        <!-- delete -->
+        <delete id="delete" parameterType="Color">
+        	delete from color where id=#{id};
+        </delete>
+        
+        <!-- update -->
+        <update id="update" parameterType="Color">
+        	update color set name=#{name} where id=#{id};
+        </update>
+          
+</mapper>

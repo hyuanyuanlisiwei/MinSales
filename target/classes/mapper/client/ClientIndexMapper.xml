@@ -1,0 +1,187 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+"http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.minsales.client.dao.ClientIndexDao">
+    
+    <!-- 查询所有的公告 -->
+    <select id="queryAllNotice" resultType="ClientIndexBean">
+    	select
+    	   id as noticeId,
+    	   name as noticeName
+    	from 
+    	   notice
+    </select>   
+    
+    <!-- 查询所有的分类 -->
+    <select id="queryAllCategory" resultType="ClientIndexBean">
+    	select
+    	   id as categoryId,
+    	   name as categoryName
+    	from 
+    	   category
+    </select>
+    
+    <sql id="queryAllGoods">
+    	select 
+    		  imgaddress.img_address_small as addressSmall,
+    		  goods.id as goodsId,
+    		  goods.title as title,
+    		  goods.price as price,
+    		  goods.stock as stock,
+    		  goods.description as description,
+    		  goods.scores as scores
+    	from
+    		  imgaddress,goods
+        where
+    		  imgaddress.goods_id=goods.id
+    	and
+    		  imgaddress.goods_id in
+    </sql>
+    <sql id="queryAllGoodsCount">
+    	select 
+    		  count(*)
+    	from
+    		  imgaddress,goods
+        where
+    		  imgaddress.goods_id=goods.id
+    	and
+    		  imgaddress.goods_id in
+    </sql>
+    
+    
+    
+    <sql id="endQueryAllGoods">
+    	and imgaddress.color_id is not null
+    	group by imgaddress.goods_id
+    	limit #{from},#{size};
+    </sql>
+    
+    <!-- 查询所有的商品信息"-->
+    <!-- 根据分类ID查询； -->
+    <select id="queryAllGoodsByCategoryId" resultType="ClientIndexBean" parameterType="ClientIndexBean">
+    	<include refid="queryAllGoods"/>
+    	(
+    	   select
+    	   		goods.id
+    	    from 
+    	    	goods,category
+    	    where
+    	    	goods.category_id=category.id
+    		<if test="categoryId!=null and categoryId!=0">
+    		 and  
+    		 	category.id=#{categoryId}
+    		</if>
+    	)
+    	<include refid="endQueryAllGoods"/>
+    </select>
+    
+    <select id="queryAllGoodsCountByCategoryId" resultType="int" parameterType="ClientIndexBean">
+    	select 
+    		count(distinct goods_id)
+    	from
+    		imgaddress
+    	where
+    		goods_id 
+    	in
+    	(
+    		select
+    			 id
+    	    from
+    	    	goods
+    	
+    		<where>
+			<if test="categoryId!=null and categoryId!=0">
+		    		category_id=#{categoryId}
+			</if> 
+    	</where> 
+    	)
+    	and color_id is not null;
+    	
+    </select>
+    
+    
+    <!-- 根据分类名称 查询 -->
+     <select id="queryAllGoodsByCategoryName" resultType="ClientIndexBean" parameterType="ClientIndexBean">
+    	<include refid="queryAllGoods"/>
+    	(
+    	   select
+    	   		goods.id
+    	    from 
+    	    	goods,category
+    	    where
+    	    	goods.category_id=category.id
+    		<if test="categoryId!=null and categoryId!=0">
+    		 and  
+    		 	category.name like '%${categoryName}%';
+    		</if>
+    	)
+    	<include refid="endQueryAllGoods"/>
+    </select>
+    
+     <select id="queryAllGoodsCountByCategoryName" resultType="int" parameterType="ClientIndexBean">
+    		select 
+    		count(distinct goods_id)
+    	from
+    		imgaddress
+    	where
+    		goods_id 
+    	in
+    	(
+    		select
+    			 id
+    	    from
+    	    	goods
+    		where
+    		    category_id 
+    		in
+    		(
+    			select id from category 
+    			<where>
+    				name like '%${categoryName}%'
+    			</where> 
+    		)
+    	)
+    	and color_id is not null;
+    	
+    </select>
+    
+    
+    
+    <!-- 根据商品名称 查询 -->
+     <select id="queryAllGoodsByGoodsName" resultType="ClientIndexBean" parameterType="ClientIndexBean">
+    	<include refid="queryAllGoods"/>
+    	(
+    	   select
+    	   		goods.id
+    	    from 
+    	    	goods
+    		<where>
+    			<if test="title!=null and title!=''">
+    				title like '%${title}%'
+    			</if>
+    		</where>
+    	)
+    	<include refid="endQueryAllGoods"/>
+    </select>
+    
+    <select id="queryAllGoodsCountByGoodsName" resultType="int" parameterType="ClientIndexBean">
+    
+    	select 
+    		count(distinct goods_id)
+    	from
+    		imgaddress
+    	where
+    		goods_id 
+    	in
+    	(
+    	   select id from goods 
+    	   <where>
+    	   	<if test="title!=null and title!=''">
+    	   	      title like '%${title}%'
+    	   	</if>
+    	   </where>
+    	)
+    	and  color_id is not null;
+    </select>
+</mapper>
